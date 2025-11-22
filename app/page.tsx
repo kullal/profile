@@ -1,9 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Github, Linkedin, Terminal, Gamepad2, Brain, Code2, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, useMotionTemplate, useMotionValue, AnimatePresence } from "framer-motion";
+import { Github, Linkedin, Terminal, Gamepad2, Brain, Code2, User, Phone, Instagram, Mail } from "lucide-react";
 import FuzzyText from "@/components/FuzzyText";
 import DecryptedText from "@/components/DecryptedText";
+import Navbar from "@/components/Navbar";
+import LoadingScreen from "@/components/LoadingScreen";
+import Footer from "@/components/Footer";
+import RetroGrid from "@/components/RetroGrid";
 import Image from "next/image";
 
 // Data Project diambil dari CV kamu
@@ -11,29 +16,53 @@ const projects = [
   {
     title: "NASA Exoplanets Identifier",
     tech: "Python, Flask, ML",
-    desc: "Pipeline ML end-to-end mendeteksi exoplanet menggunakan dataset NASA Kepler & TESS.",
+    desc: "End to end ML pipeline detecting exoplanets using NASA Kepler & TESS datasets.",
     icon: <Brain className="w-8 h-8" />,
+    image: "/Exoplantropy.png"
   },
   {
-    title: "Scaridae Expedition",
-    tech: "Unity, C#, Blender",
-    desc: "Game RPG Turn-based pixel art tentang ikan kakatua menyelamatkan terumbu karang.",
+    title: "NeuroScan AI",
+    tech: "Deep Learning, CNN, Medical Imaging",
+    desc: "MRI based brain tumor detection system using advanced CNN architecture.",
+    icon: <Brain className="w-8 h-8" />,
+    image: "/MRI classification.png"
+  },
+  {
+    title: "EPL Predictor",
+    tech: "Python, Scikit-learn, Data Analysis",
+    desc: "Premier League match result prediction using historical data analysis.",
     icon: <Gamepad2 className="w-8 h-8" />,
+    image: "/Premier League Predict.png"
   },
   {
     title: "Waste Detection System",
     tech: "YOLOv8, Streamlit",
-    desc: "Sistem klasifikasi sampah real-time Organik vs Anorganik menggunakan Computer Vision.",
+    desc: "Real-time Organic vs Inorganic waste classification system using Computer Vision.",
     icon: <Code2 className="w-8 h-8" />,
+    image: "/wasteClassification.png"
   }
 ];
 
-// Komponen Background Grid Bergerak (Ala React Bits)
-const RetroGrid = () => (
-  <div className="fixed inset-0 z-0 opacity-20 pointer-events-none">
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,#22c55e_1px,transparent_1px),linear-gradient(to_bottom,#22c55e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-  </div>
-);
+// Tech Stack Data
+const techStack = [
+  { name: "Python", icon: "https://cdn.simpleicons.org/python/4ade80" },
+  { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript/4ade80" },
+  { name: "TypeScript", icon: "https://cdn.simpleicons.org/typescript/4ade80" },
+  { name: "C#", icon: "https://cdn.simpleicons.org/dotnet/4ade80" },
+  { name: "C++", icon: "https://cdn.simpleicons.org/cplusplus/4ade80" },
+  { name: "Java", icon: "https://cdn.simpleicons.org/openjdk/4ade80" },
+  { name: "PHP", icon: "https://cdn.simpleicons.org/php/4ade80" },
+  { name: "Laravel", icon: "https://cdn.simpleicons.org/laravel/4ade80" },
+  { name: "Vue.js", icon: "https://cdn.simpleicons.org/vuedotjs/4ade80" },
+  { name: "React", icon: "https://cdn.simpleicons.org/react/4ade80" },
+  { name: "Next.js", icon: "https://cdn.simpleicons.org/nextdotjs/4ade80" },
+  { name: "Flask", icon: "https://cdn.simpleicons.org/flask/4ade80" },
+  { name: "TensorFlow", icon: "https://cdn.simpleicons.org/tensorflow/4ade80" },
+  { name: "Unity", icon: "https://cdn.simpleicons.org/unity/4ade80" },
+  { name: "Blender", icon: "https://cdn.simpleicons.org/blender/4ade80" },
+  { name: "Git", icon: "https://cdn.simpleicons.org/git/4ade80" },
+  { name: "YOLOv8", icon: "https://cdn.simpleicons.org/ultralytics/4ade80" },
+];
 
 // Komponen Robot Retro Background
 const RetroBot = () => (
@@ -79,13 +108,89 @@ const RetroBot = () => (
   </div>
 );
 
-export default function Home() {
-  return (
-    <main className="min-h-screen relative overflow-hidden selection:bg-green-900 selection:text-green-100">
-      <RetroGrid />
+function ProjectCard({ project, i }: { project: any, i: number }) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
-      {/* --- HERO SECTION (FULL SCREEN CENTERED) --- */}
-      <section className="min-h-screen flex flex-col items-center justify-center relative z-10 px-4">
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: i * 0.1 }}
+      onMouseMove={handleMouseMove}
+      className="group relative bg-slate-900 border border-green-900/50 rounded-xl overflow-hidden"
+    >
+      {/* Spotlight Gradient */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              650px circle at ${mouseX}px ${mouseY}px,
+              rgba(34, 197, 94, 0.15),
+              transparent 80%
+            )
+          `,
+        }}
+      />
+      
+      <div className="relative h-full p-6">
+        {/* Project Image */}
+        <div className="relative h-48 w-full mb-6 overflow-hidden rounded border border-green-900/50 group-hover:border-green-500/50 transition-colors">
+          <Image 
+            src={project.image} 
+            alt={project.title} 
+            fill 
+            className="object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500 grayscale group-hover:grayscale-0"
+          />
+          {/* Scanline overlay for image */}
+          <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[size:100%_4px] pointer-events-none opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+        </div>
+
+        <div className="flex items-center gap-3 mb-4 text-green-400">
+          {project.icon}
+          <h3 className="text-2xl font-bold group-hover:underline decoration-green-500 decoration-4 underline-offset-4">
+            {project.title}
+          </h3>
+        </div>
+        
+        <p className="text-sm text-green-600 font-mono mb-4">[{project.tech}]</p>
+        <p className="text-slate-300 text-lg">{project.desc}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  return (
+    <>
+      <AnimatePresence mode="wait">
+        {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
+
+      {!isLoading && (
+        <main className="min-h-screen relative overflow-hidden selection:bg-green-900 selection:text-green-100">
+          <Navbar />
+          <RetroGrid />
+
+          {/* --- HERO SECTION (FULL SCREEN CENTERED) --- */}
+          <section id="hero" className="min-h-screen flex flex-col items-center justify-center relative z-10 px-4">
         <RetroBot />
         
         <motion.div
@@ -167,7 +272,7 @@ export default function Home() {
       <div className="relative z-10 container mx-auto px-6 py-20 max-w-4xl">
         
         {/* --- ABOUT ME SECTION --- */}
-        <section className="mb-32">
+        <section id="about" className="mb-32 scroll-mt-24">
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -196,7 +301,7 @@ export default function Home() {
               <div className="flex items-center justify-center md:justify-start gap-3 mb-6">
                 <User className="w-6 h-6 text-green-400" />
                 <h2 className="text-3xl font-bold text-green-400 tracking-tight">
-                  &lt;About_Me /&gt;
+                  &lt; About_Me /&gt;
                 </h2>
               </div>
               
@@ -213,38 +318,56 @@ export default function Home() {
         </section>
 
         {/* --- PROJECTS SECTION --- */}
-        <section>
+        <section id="projects" className="mb-32 scroll-mt-24">
           <h2 className="text-4xl font-bold mb-12 border-b border-green-800 pb-4 inline-block">
-            &lt;Selected_Projects /&gt;
+            &lt; Recent Project /&gt;
           </h2>
           
           <div className="grid md:grid-cols-2 gap-6">
             {projects.map((project, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="group relative bg-slate-900 border border-green-800 p-6 rounded hover:border-green-400 transition-colors"
-              >
-                {/* Efek Hover Retro */}
-                <div className="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                <div className="relative z-10">
-                  <div className="mb-4 text-green-400">{project.icon}</div>
-                  <h3 className="text-2xl font-bold mb-2 group-hover:underline decoration-green-500 decoration-4 underline-offset-4">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-green-600 font-mono mb-4">[{project.tech}]</p>
-                  <p className="text-slate-300 text-lg">{project.desc}</p>
-                </div>
-              </motion.div>
+              <ProjectCard key={i} project={project} i={i} />
             ))}
           </div>
         </section>
 
+        {/* --- TECH STACK SECTION --- */}
+        <section id="tech-stack" className="mb-32 scroll-mt-24">
+           <h2 className="text-4xl font-bold mb-12 border-b border-green-800 pb-4 inline-block">
+            &lt; Tech_Stack /&gt;
+          </h2>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-8">
+            {techStack.map((tech, i) => (
+              <motion.div
+                key={tech.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="flex flex-col items-center gap-3 group"
+              >
+                <div className="relative w-16 h-16 flex items-center justify-center bg-slate-900 border border-green-500/30 rounded-xl p-3 group-hover:border-green-500 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.3)] transition-all duration-300">
+                  <Image 
+                    src={tech.icon} 
+                    alt={tech.name} 
+                    width={40} 
+                    height={40} 
+                    unoptimized
+                    className="opacity-70 group-hover:opacity-100 transition-opacity"
+                  />
+                </div>
+                <span className="text-green-400/70 font-mono text-sm group-hover:text-green-400 transition-colors">
+                  {tech.name}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </section>
       </div>
+
+      {/* --- CONNECT WITH ME (FOOTER) --- */}
+      <Footer />
     </main>
+      )}
+    </>
   );
 }
