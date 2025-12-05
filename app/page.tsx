@@ -41,7 +41,18 @@ const projects = [
     icon: <Code2 className="w-8 h-8" />,
     image: "/wasteClassification.png"
   }
+  
 ];
+
+const projectsgames = [
+  {
+    title: "Space Explorer",
+    tech: "Unity, C#",
+    desc: "3D space exploration game with realistic physics and immersive environments.",
+    icon: <Gamepad2 className="w-8 h-8" />,
+    image: "/Scaridae.png"
+  },
+]
 
 // Tech Stack Data
 const techStack = [
@@ -320,12 +331,24 @@ export default function Home() {
         {/* --- PROJECTS SECTION --- */}
         <section id="projects" className="mb-32 scroll-mt-24">
           <h2 className="text-4xl font-bold mb-12 border-b border-green-800 pb-4 inline-block">
-            &lt; Recent Project /&gt;
+            &lt; Recent AI/ML Project /&gt;
           </h2>
           
           <div className="grid md:grid-cols-2 gap-6">
             {projects.map((project, i) => (
               <ProjectCard key={i} project={project} i={i} />
+            ))}
+          </div>
+        </section>
+
+        <section id="projects" className="mb-32 scroll-mt-24">
+          <h2 className="text-4xl font-bold mb-12 border-b border-green-800 pb-4 inline-block">
+            &lt; Recent Game Project /&gt;
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            {projectsgames.map((projectgame, i) => (
+              <ProjectCard key={i} project={projectgame} i={i} />
             ))}
           </div>
         </section>
